@@ -1,0 +1,7 @@
+CREATE TABLE Designation (
+    DesignationID INT IDENTITY(1,1) PRIMARY KEY,
+    DesignationName NVARCHAR(100) NOT NULL UNIQUE,
+    Description NVARCHAR(255),
+    CreatedAt DATETIME DEFAULT GETDATE(), 
+    UpdatedAt DATETIME DEFAULT GETDATE()
+);

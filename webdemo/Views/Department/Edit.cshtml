@@ -1,0 +1,19 @@
+﻿@model class_department
+<h1>Edit Department</h1>
+@if (!ViewData.ModelState.IsValid) {
+    <div class="alert alert-danger">
+        @Html.ValidationSummary(false, "Please fix the following errors:")
+    </div>
+}
+<form asp-action="Edit" method="post">
+    <input type="hidden" name="id" value="@Model.DepartmentId" />
+    <div class="form-group">
+        <label for="DepartmentName">Department Name</label>
+        <input type="text" id="DepartmentName" name="DepartmentName" class="form-control" value="@Model.DepartmentName" />
+    </div>
+    <div class="form-group">
+        <label for="Description">Description</label>
+        <input type="text" id="Description" name="Description" class="form-control" value="@Model.Description" />
+    </div>
+    <button type="submit" class="btn btn-primary">Update</button>
+</form>

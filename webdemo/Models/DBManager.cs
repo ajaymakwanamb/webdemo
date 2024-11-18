@@ -19,9 +19,9 @@ namespace webdemo.Models
             string HostType = class_Init.HostType;
             switch (HostType)
             {
-                case "LOC_UAT":
-                    csComm = "Server=MAK\\MSSQLSERVERNEW;Database=demodb;Trusted_Connection=True;MultipleActiveResultSets=true;Integrated Security=True;";
-                    csMain = "Server=MAK\\MSSQLSERVERNEW;Database=demodb;Trusted_Connection=True;MultipleActiveResultSets=true;Integrated Security=True;";
+                case "LOC":
+                    csComm = "Server=MAK\\SQLEXPRESS;Database=demodb;Trusted_Connection=True;MultipleActiveResultSets=true;Integrated Security=True;Encrypt=False;";
+                    csMain = "Server=MAK\\SQLEXPRESS;Database=demodb;Trusted_Connection=True;MultipleActiveResultSets=true;Integrated Security=True;Encrypt=False;";
                     break;
                 case "ONL_UAT":
                     csComm = "Server=serverurl;Database=dbname;User Id=admin;password=password;Trusted_Connection=False;MultipleActiveResultSets=true;";

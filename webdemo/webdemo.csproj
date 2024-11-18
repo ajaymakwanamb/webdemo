@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="sql\procedure\" />
     <Folder Include="sql\schema\" />
   </ItemGroup>
 
