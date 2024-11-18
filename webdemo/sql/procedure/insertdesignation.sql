@@ -1,6 +1,7 @@
 CREATE PROCEDURE InsertDesignation
     @DesignationName NVARCHAR(100),
-    @Description NVARCHAR(255) = NULL
+    @Description NVARCHAR(255) = NULL,
+    @RowsAffected INT OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -11,5 +12,6 @@ BEGIN
     VALUES (
         @DesignationName, @Description, GETDATE()
     );
+    SET @RowsAffected = @@ROWCOUNT;
 END;
 GO

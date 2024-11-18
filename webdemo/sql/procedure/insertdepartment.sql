@@ -1,15 +1,11 @@
 CREATE PROCEDURE InsertDepartment
     @DepartmentName NVARCHAR(100),
-    @Description NVARCHAR(255) = NULL
+    @Description NVARCHAR(255) = NULL,
+    @RowsAffected INT OUTPUT
 AS
 BEGIN
-    SET NOCOUNT ON;
+    INSERT INTO Department (DepartmentName, Description, CreatedAt)
+    VALUES (@DepartmentName, @Description, GETDATE());
 
-    INSERT INTO Department (
-        DepartmentName, Description, CreatedAt
-    )
-    VALUES (
-        @DepartmentName, @Description, GETDATE()
-    );
-END;
-GO
+    SET @RowsAffected = @@ROWCOUNT;
+END

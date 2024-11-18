@@ -1,7 +1,9 @@
 CREATE PROCEDURE UpdateDesignation
     @DesignationID INT,
     @DesignationName NVARCHAR(100),
-    @Description NVARCHAR(255) = NULL
+    @Description NVARCHAR(255) = NULL,
+    @RowsAffected INT OUTPUT
+
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -12,5 +14,6 @@ BEGIN
         Description = @Description,
         UpdatedAt = GETDATE()
     WHERE DesignationID = @DesignationID;
+    SET @RowsAffected = @@ROWCOUNT;
 END;
 GO

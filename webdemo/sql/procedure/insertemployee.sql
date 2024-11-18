@@ -13,7 +13,8 @@ CREATE PROCEDURE InsertEmployee
     @State NVARCHAR(100) = NULL,
     @Country NVARCHAR(100) = NULL,
     @PostalCode NVARCHAR(10) = NULL,
-    @Status NVARCHAR(10) = 'Active'
+    @Status NVARCHAR(10) = 'Active',
+    @RowsAffected INT OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -26,5 +27,7 @@ BEGIN
         @FirstName, @LastName, @Email, @PhoneNumber, @DateOfBirth, @HireDate,
         @Salary, @DepartmentID, @DesignationID, @Address, @City, @State, @Country, @PostalCode, @Status, GETDATE()
     );
+
+       SET @RowsAffected = @@ROWCOUNT;
 END;
 GO

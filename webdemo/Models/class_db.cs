@@ -27,13 +27,21 @@ namespace webdemo.Models {
         public async static Task<int> ExecuteNonQueryAsync(string procName, SqlParameter[] parameters = null) {
             DBManager objDbHelper = new DBManager();
             int rowsAffected = 0;
+            var outputParam = new SqlParameter();
             try {
                 objDbHelper.cmd.CommandText = procName;
                 objDbHelper.cmd.CommandType = CommandType.StoredProcedure;
                 if (parameters != null) {
                     objDbHelper.cmd.Parameters.AddRange(parameters);
                 }
-                rowsAffected = await Task.Run(() => objDbHelper.cmd.ExecuteNonQuery());
+                if (procName.ToLower().Contains("insert") || procName.ToLower().Contains("update")) {
+                    outputParam = new SqlParameter("@RowsAffected", SqlDbType.Int) {
+                        Direction = ParameterDirection.Output
+                    };
+                    objDbHelper.cmd.Parameters.Add(outputParam);
+                }
+                await Task.Run(() => objDbHelper.cmd.ExecuteNonQuery());
+                rowsAffected = (int)outputParam.Value;
             } catch (Exception ex) {
                 Class_common ObjComm = new Class_common();
                 ObjComm.ErrorLog(ex.Message + "////" + ex.StackTrace, "class_db ExecuteNonQueryAsync");
@@ -42,7 +50,5 @@ namespace webdemo.Models {
             }
             return rowsAffected;
         }
-
-      
     }
 }

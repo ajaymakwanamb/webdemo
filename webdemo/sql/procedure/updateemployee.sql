@@ -14,7 +14,9 @@ CREATE PROCEDURE UpdateEmployee
     @State NVARCHAR(100) = NULL,
     @Country NVARCHAR(100) = NULL,
     @PostalCode NVARCHAR(10) = NULL,
-    @Status NVARCHAR(10)
+    @Status NVARCHAR(10),
+    @RowsAffected INT OUTPUT
+
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -38,5 +40,6 @@ BEGIN
         Status = @Status,
         UpdatedAt = GETDATE()
     WHERE EmployeeID = @EmployeeID;
+    SET @RowsAffected = @@ROWCOUNT;
 END;
 GO
