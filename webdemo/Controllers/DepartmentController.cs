@@ -10,6 +10,14 @@ namespace webdemo.Controllers {
             var listDepartment = await class_department.GetListAsync();
             return View(listDepartment);
         }
+        public async Task<IActionResult> Details(int id) {
+            var objdepartment = await class_department.GetListAsync(id);
+            if (objdepartment == null || objdepartment.Rows.Count == 0) {
+                return NotFound();
+            }
+            var department = class_department.MapFromDataRow(objdepartment.Rows[0]);
+            return View(department);
+        }
 
         [HttpGet]
         public IActionResult Create() {
@@ -33,15 +41,16 @@ namespace webdemo.Controllers {
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id) {
-            var department = await class_department.GetListAsync(id);
-            if (department == null) {
+            var objdepartment = await class_department.GetListAsync(id);
+            if (objdepartment == null || objdepartment.Rows.Count == 0) {
                 return NotFound();
             }
+            var department = class_department.MapFromDataRow(objdepartment.Rows[0]);
             return View(department);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, class_department objdepartment) {
+        public async Task<IActionResult> Edit(int DepartmentId, class_department objdepartment) {
             objdepartment.Validate(ModelState);
             if (!ModelState.IsValid) {
                 return View(objdepartment);

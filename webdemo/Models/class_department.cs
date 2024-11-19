@@ -45,5 +45,15 @@ namespace webdemo.Models {
             return await class_db.ExecuteNonQueryAsync(procName, parameters.ToArray());
         }
         #endregion
+
+        #region MapFromDataRow
+        public static class_department MapFromDataRow(DataRow row) {
+            return new class_department {
+                DepartmentId = Convert.ToInt32(row["DepartmentId"]),
+                DepartmentName = row["DepartmentName"].ToString(),
+                Description = row["Description"].ToString()
+            };
+        }
+        #endregion
     }
 }

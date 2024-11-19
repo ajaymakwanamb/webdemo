@@ -6,7 +6,7 @@
     </div>
 }
 <form asp-action="Edit" method="post">
-    <input type="hidden" name="id" value="@Model.DepartmentId" />
+    <input type="hidden" name="DepartmentId" value="@Model.DepartmentId" />
     <div class="form-group">
         <label for="DepartmentName">Department Name</label>
         <input type="text" id="DepartmentName" name="DepartmentName" class="form-control" value="@Model.DepartmentName" />
