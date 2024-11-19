@@ -44,5 +44,15 @@ namespace webdemo.Models {
             return await class_db.ExecuteNonQueryAsync(procName, parameters.ToArray());
         }
         #endregion
+
+        #region MapFromDataRow
+        public static class_designation MapFromDataRow(DataRow row) {
+            return new class_designation {
+                DesignationId = Convert.ToInt32(row["DesignationId"]),
+                DesignationName = row["DesignationName"].ToString(),
+                Description = row["Description"].ToString()
+            };
+        }
+        #endregion
     }
 }
