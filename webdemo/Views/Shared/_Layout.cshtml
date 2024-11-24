@@ -7,6 +7,14 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/webdemo.styles.css" asp-append-version="true" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/jquery.unobtrusive-ajax.js"></script>
+    <script src="~/js/common.js"></script>
+    <link href="~/css/select2.css" rel="stylesheet" />
+    <script src="~/js/select2.min.js"></script>
+    <script src="~/js/xlsx.full.min.js"></script>
+    <script src="~/js/jspdf.umd.min.js"></script>
+    <script src="~/js/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
     <header>
@@ -45,7 +53,6 @@
             &copy; 2024 - webdemo - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)

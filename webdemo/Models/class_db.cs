@@ -4,6 +4,7 @@ using static Azure.Core.HttpHeader;
 
 namespace webdemo.Models {
     public class class_db {
+        #region Execute Stored Procedure
         public async static Task<DataTable> ExecuteStoredProcAsync(string procName, SqlParameter[] parameters = null) {
             DBManager objDbHelper = new DBManager();
             var dataTable = new DataTable();
@@ -24,6 +25,9 @@ namespace webdemo.Models {
             }
             return dataTable;
         }
+        #endregion
+
+        #region Execute Query
         public async static Task<int> ExecuteNonQueryAsync(string procName, SqlParameter[] parameters = null) {
             DBManager objDbHelper = new DBManager();
             int rowsAffected = 0;
@@ -50,5 +54,6 @@ namespace webdemo.Models {
             }
             return rowsAffected;
         }
+        #endregion
     }
 }

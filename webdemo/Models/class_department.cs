@@ -31,6 +31,8 @@ namespace webdemo.Models {
             }
             return await class_db.ExecuteStoredProcAsync("ListDepartments", parameters.ToArray());
         }
+
+
         public async static Task<int> SaveAsync(class_department objdepartment) {
             string procName = objdepartment.DepartmentId > 0 ? "UpdateDepartment" : "InsertDepartment";
             var parameters = new List<SqlParameter>
@@ -53,6 +55,20 @@ namespace webdemo.Models {
                 DepartmentName = row["DepartmentName"].ToString(),
                 Description = row["Description"].ToString()
             };
+        }
+        #endregion
+
+        #region SelectList
+        public async static Task<List<object>> GetList() {
+            DataTable dt = await GetListAsync();
+            List<object> departments = new List<object>();
+            foreach (DataRow row in dt.Rows) {
+                departments.Add(new {
+                    id = Convert.ToInt32(row["DepartmentID"]),
+                    name = row["DepartmentName"].ToString()
+                });
+            }
+            return departments;
         }
         #endregion
     }

@@ -54,5 +54,19 @@ namespace webdemo.Models {
             };
         }
         #endregion
+
+        #region SelectList
+        public async static Task<List<object>> GetList() {
+            DataTable dt = await GetListAsync();
+            List<object> designations = new List<object>();
+            foreach (DataRow row in dt.Rows) {
+                designations.Add(new {
+                    id = Convert.ToInt32(row["DesignationId"]),
+                    name = row["DesignationName"].ToString()
+                });
+            }
+            return designations;
+        }
+        #endregion
     }
 }

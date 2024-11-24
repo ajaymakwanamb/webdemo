@@ -5,11 +5,14 @@ using webdemo.Models;
 
 namespace webdemo.Controllers {
     public class DesignationController : Controller {
-
+        #region Index
         public async Task<IActionResult> Index() {
             var listDesignation = await class_designation.GetListAsync();
             return View(listDesignation);
         }
+        #endregion
+
+        #region Details
         public async Task<IActionResult> Details(int id) {
             var objdesignation = await class_designation.GetListAsync(id);
             if (objdesignation == null || objdesignation.Rows.Count == 0) {
@@ -18,10 +21,13 @@ namespace webdemo.Controllers {
             var designation = class_designation.MapFromDataRow(objdesignation.Rows[0]);
             return View(designation);
         }
+        #endregion
 
+        #region Create
         [HttpGet]
         public IActionResult Create() {
-            return View();
+            class_designation objdesignation = new class_designation();
+            return View(objdesignation);
         }
 
         [HttpPost]
@@ -38,7 +44,9 @@ namespace webdemo.Controllers {
             ModelState.AddModelError("", "Failed to create designation.");
             return View();
         }
+        #endregion
 
+        #region Edit
         [HttpGet]
         public async Task<IActionResult> Edit(int id) {
             var objdesignation = await class_designation.GetListAsync(id);
@@ -55,14 +63,6 @@ namespace webdemo.Controllers {
             if (!ModelState.IsValid) {
                 return View(objdesignation);
             }
-
-            var parameters = new List<SqlParameter>
-            {
-                new SqlParameter("@DesignationId", objdesignation.DesignationId),
-                new SqlParameter("@DesignationName", objdesignation.DesignationName),
-                new SqlParameter("@Description", objdesignation.Description)
-            };
-
             var rowsAffected = await class_designation.SaveAsync(objdesignation);
             if (rowsAffected > 0) {
                 return RedirectToAction("Index");
@@ -70,5 +70,6 @@ namespace webdemo.Controllers {
             ModelState.AddModelError("", "Failed to update designation.");
             return View(objdesignation);
         }
+        #endregion
     }
 }
