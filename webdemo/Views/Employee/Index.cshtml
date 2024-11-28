@@ -8,21 +8,60 @@
 <a asp-action="Create" class="btn btn-sm btn-success" style="float:right">Add New Employee</a>
 <button class="btn btn-sm btn-primary" onclick="exportToExcel('tblemployee','employeesdata')">Excel JS</button>
 <button class="btn btn-sm btn-primary" onclick="exportToPDF('tblemployee','employeesdata')">PDF JS</button>
+<button class="btn btn-sm btn-primary" onclick="downloadFile('xlsx')">Excel API</button>
+<button class="btn btn-sm btn-primary" onclick="downloadFile('pdf')">PDF API</button>
 <div id="listemployee"></div>
 
 @section Scripts {
     <script>
-             async function fetchData() {
-                    try {
-                        const response = await callApi("/employee/IndexData", null);
-                        var mytable = createTable(response,"tblemployee");
-                        $("#listemployee").html(mytable);
-                    } catch (error) {
-                        console.error("Error:", error);
-                    }
-                }
-
+        async function fetchData() {
+            try {
+                const response = await callApi("/employee/IndexData", null);
+                var mytable = createTable(response,"tblemployee");
+                $("#listemployee").html(mytable);
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
         fetchData();
+
+
+        function downloadFile(exporttype) {
+            $.ajax({
+                url: "/Employee/ExportData",
+                method: "GET",
+                data: { "exporttype": exporttype },
+                xhrFields: {
+                    responseType: 'blob' 
+                },
+                success: function (data, status, xhr) {
+                    const disposition = xhr.getResponseHeader('Content-Disposition');
+                    let filename = 'download.' + exporttype; // Default filename
+
+                    if (disposition) {
+                        const filenameMatch = disposition.match(/filename\*?=(?:(['"])(.*?)\1|(?:UTF-8'')?([^;]*))/);
+                        if (filenameMatch) {
+                            filename = decodeURIComponent(filenameMatch[2] || filenameMatch[3] || filename);
+                        }
+                    }
+
+                    const blob = new Blob([data], { type: exporttype === 'pdf' ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+                    const link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = filename;
+
+                    document.body.appendChild(link);
+                    link.click();
+                    window.URL.revokeObjectURL(link.href); // Free memory
+                    document.body.removeChild(link);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error downloading file:", error);
+                    alert("Failed to download the file. Please try again.");
+                }
+            });
+        }
 
 
     </script>

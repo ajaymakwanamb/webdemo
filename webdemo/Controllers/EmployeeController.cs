@@ -7,65 +7,36 @@ namespace webdemo.Controllers {
     public class EmployeeController : Controller {
         #region Index
         public async Task<IActionResult> Index() {
-            var listDepartment = await class_employee.GetListAsync();
-            return View(listDepartment);
+            var listEmployee = await class_employee.GetListAsync();
+            return View(listEmployee);
         }
 
         public async Task<IActionResult> IndexData() {
-            JArray rArray = new JArray();
-
-            var listEmployee = await class_employee.GetListAsync();
-            var departments = await class_department.GetListAsync();
-            var designations = await class_designation.GetListAsync();
-
-            var departmentLookup = departments.AsEnumerable().ToDictionary(row => row.GetValue<int>("DepartmentID"), row => row.GetValue<string>("DepartmentName"));
-            var designationLookup = designations.AsEnumerable().ToDictionary(row => row.GetValue<int>("DesignationID"), row => row.GetValue<string>("DesignationName"));
-
-            JObject jObjhead = new JObject {
-                ["row_type"] = "head",
-                ["row_class"] = "",
-                ["col1"] = "Employee Id",
-                ["col2"] = "First Name",
-                ["col3"] = "Last Name",
-                ["col4"] = "Email",
-                ["col5"] = "Phone Number",
-                ["col6"] = "Date Of Birth",
-                ["col7"] = "Department",
-                ["col8"] = "Designation",
-                ["col9"] = "Action"
-            };
-            rArray.Add(jObjhead);
-
-            // Add body rows
-            foreach (DataRow row in listEmployee.Rows) {
-                var employeeId = row.GetValue<int>("EmployeeID").ToString();
-                int departmentId = row.GetValue<int>("DepartmentID");
-                int designationId = row.GetValue<int>("DesignationID");
-
-                var departmentName = departmentLookup.ContainsKey(departmentId) ? departmentLookup[departmentId] : departmentId.ToString();
-                var designationName = designationLookup.ContainsKey(designationId) ? designationLookup[designationId] : designationId.ToString();
-
-                string actionbtn = $@"<a class=""btn btn-primary btn-sm mx-1"" href=""/Designation/Details/{employeeId}"">View</a><a class=""btn btn-warning btn-sm mx-1"" href=""/Designation/Edit/{employeeId}"">Edit</a><a class=""btn btn-danger btn-sm mx-1"" href=""/Designation/Delete/{employeeId}"">Delete</a>";
-
-                JObject jObjBody = new JObject {
-                    ["row_type"] = "body",
-                    ["row_class"] = "",
-                    ["col1"] = row.GetValue<int>("EmployeeID").ToString(),
-                    ["col2"] = row.GetValue<string>("FirstName"),
-                    ["col3"] = row.GetValue<string>("LastName"),
-                    ["col4"] = row.GetValue<string>("Email"),
-                    ["col5"] = row.GetValue<string>("PhoneNumber"),
-                    ["col6"] = row.GetValue<DateTime?>("DateOfBirth")?.ToString("yyyy-MM-dd") ?? "",
-                    ["col7"] = departmentName,
-                    ["col8"] = designationName,
-                    ["col9"] = actionbtn,
-                    ["col9_type"] = "html",
-                    ["col9_class"] = $@"myactionrow{employeeId}"
-                };
-                rArray.Add(jObjBody);
-            }
+            JArray rArray = await class_employee.GetJsonAsync();
             return Content(rArray.ToString(), "application/json");
         }
+        #endregion
+
+        #region Export
+
+        public async Task<IActionResult> ExportData(string exporttype) {
+            JArray rArray = await class_employee.GetJsonAsync();
+            string cdate = DateTime.Now.ToString("yyyyMMdd");
+            string myfilename = "employee_" + cdate + "." + exporttype;
+
+            byte[] fileBytes = null;
+
+            if (exporttype == "pdf") {
+                string myhtml = class_export.CreateTable(rArray, "employeetable");
+                fileBytes = class_export.generatepdf(myhtml); 
+            } else if (exporttype == "xlsx") {
+                fileBytes = class_export.generateexcel(rArray); 
+            }
+
+            return File(fileBytes, "application/octet-stream", myfilename);
+        }
+
+
         #endregion
 
         #region Create
@@ -102,7 +73,7 @@ namespace webdemo.Controllers {
             if (myemployee == null || myemployee.Rows.Count == 0) {
                 return NotFound();
             }
-           
+
             class_employee objemployee = class_employee.MapFromDataRow(myemployee.Rows[0]);
             AddDepartment(objemployee.DepartmentID);
             AddDesignation(objemployee.DesignationID);

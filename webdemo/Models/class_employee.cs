@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Data.SqlClient;
+using Newtonsoft.Json.Linq;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Reflection;
@@ -133,6 +134,62 @@ namespace webdemo.Models {
                 parameters.Add(new SqlParameter("@EmployeeID", employeeId.Value));
             }
             return await class_db.ExecuteStoredProcAsync("ListEmployees", parameters.ToArray());
+        }
+
+        public async static Task<JArray> GetJsonAsync() {
+            JArray rArray = new JArray();
+
+            var listEmployee = await class_employee.GetListAsync();
+            var departments = await class_department.GetListAsync();
+            var designations = await class_designation.GetListAsync();
+
+            var departmentLookup = departments.AsEnumerable().ToDictionary(row => row.GetValue<int>("DepartmentID"), row => row.GetValue<string>("DepartmentName"));
+            var designationLookup = designations.AsEnumerable().ToDictionary(row => row.GetValue<int>("DesignationID"), row => row.GetValue<string>("DesignationName"));
+
+            JObject jObjhead = new JObject {
+                ["row_type"] = "head",
+                ["row_class"] = "",
+                ["col1"] = "Employee Id",
+                ["col2"] = "First Name",
+                ["col3"] = "Last Name",
+                ["col4"] = "Email",
+                ["col5"] = "Phone Number",
+                ["col6"] = "Date Of Birth",
+                ["col7"] = "Department",
+                ["col8"] = "Designation",
+                ["col9"] = "Action",
+                ["col9_type"] = "html",
+            };
+            rArray.Add(jObjhead);
+
+            foreach (DataRow row in listEmployee.Rows) {
+                var employeeId = row.GetValue<int>("EmployeeID").ToString();
+                int departmentId = row.GetValue<int>("DepartmentID");
+                int designationId = row.GetValue<int>("DesignationID");
+
+                var departmentName = departmentLookup.ContainsKey(departmentId) ? departmentLookup[departmentId] : departmentId.ToString();
+                var designationName = designationLookup.ContainsKey(designationId) ? designationLookup[designationId] : designationId.ToString();
+
+                string actionbtn = $@"<a class=""btn btn-primary btn-sm mx-1"" href=""/Designation/Details/{employeeId}"">View</a><a class=""btn btn-warning btn-sm mx-1"" href=""/Designation/Edit/{employeeId}"">Edit</a><a class=""btn btn-danger btn-sm mx-1"" href=""/Designation/Delete/{employeeId}"">Delete</a>";
+
+                JObject jObjBody = new JObject {
+                    ["row_type"] = "body",
+                    ["row_class"] = "",
+                    ["col1"] = row.GetValue<int>("EmployeeID").ToString(),
+                    ["col2"] = row.GetValue<string>("FirstName"),
+                    ["col3"] = row.GetValue<string>("LastName"),
+                    ["col4"] = row.GetValue<string>("Email"),
+                    ["col5"] = row.GetValue<string>("PhoneNumber"),
+                    ["col6"] = row.GetValue<DateTime?>("DateOfBirth")?.ToString("yyyy-MM-dd") ?? "",
+                    ["col7"] = departmentName,
+                    ["col8"] = designationName,
+                    ["col9"] = actionbtn,
+                    ["col9_type"] = "html",
+                    ["col9_class"] = $@"myactionrow{employeeId}"
+                };
+                rArray.Add(jObjBody);
+            }
+            return rArray;
         }
 
         public async static Task<int> SaveAsync(class_employee employee) {
